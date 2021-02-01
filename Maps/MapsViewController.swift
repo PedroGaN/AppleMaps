@@ -13,7 +13,8 @@ import MapKit
 class MapsViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
     
     let pointsOfInterest = [
-        CLLocationCoordinate2DMake(40.642500026153755, -4.155350915798264),       CLLocationCoordinate2DMake(40.0, -4.0),
+        CLLocationCoordinate2DMake(40.642500026153755, -4.155350915798264),
+        CLLocationCoordinate2DMake(40.0, -4.0),
         CLLocationCoordinate2DMake(40.2, -4.1),
         CLLocationCoordinate2DMake(40.3, -4.2)
     ]
@@ -68,30 +69,23 @@ class MapsViewController: UIViewController, CLLocationManagerDelegate, MKMapView
                 print(error.localizedDescription)
             } else {
                 self.mapView.addOverlay(respuesta!.routes[0].polyline)
-                self.first = false
-                self.mapView.addOverlay(respuesta!.routes[0].polyline)
-                self.mapView.addOverlay(respuesta!.routes[0].polyline, level: .aboveRoads)
+
             }
             
         }
             
     }
     
-    var first = true
+    //var first = true
     
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         
-        if(first){
+
             let renderer = MKPolylineRenderer(overlay: overlay)
             renderer.strokeColor = UIColor.red
             renderer.lineWidth = 10
             return renderer
-        }else{
-            let renderer = MKPolylineRenderer(overlay: overlay)
-            renderer.strokeColor = UIColor.yellow
-            renderer.lineWidth = 4
-            return renderer
-        }
+
         
     }
     

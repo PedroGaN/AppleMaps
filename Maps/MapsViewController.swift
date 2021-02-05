@@ -32,16 +32,18 @@ class MapsViewController: UIViewController, CLLocationManagerDelegate, MKMapView
         manager = CLLocationManager()
         manager!.delegate = self
         
-        let location = CLLocationCoordinate2DMake(40.642500026153755, -4.155350915798264)
+        mapView.delegate = self
+        
+        getRoute()
+        
+        let location = CLLocationCoordinate2DMake(0, 0)
         let span = MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1)
         
         let region = MKCoordinateRegion(center: location, span: span)
         
         mapView.setRegion(region, animated: true)
-      
-        mapView.delegate = self
+       
         
-        loadRoute()
         
     }
     
@@ -127,6 +129,26 @@ class MapsViewController: UIViewController, CLLocationManagerDelegate, MKMapView
         
     }
 
+    func getRoute(){
+        
+        let origin = "Toronto"
+        let destination = "Montreal"
+        
+        NetworkManager.shared.getRoute(origin: origin, destination: destination, completion: {polyline in
+            
+            let location = CLLocationCoordinate2DMake(polyline.coordinate.latitude, polyline.coordinate.longitude)
+            let span = MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1)
+            
+            let region = MKCoordinateRegion(center: location, span: span)
+            
+            self.mapView.setRegion(region, animated: true)
+            
+            self.mapView.addOverlay(polyline)
+            
+        })
+        
+        
+    }
 
 }
 

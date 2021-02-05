@@ -18,7 +18,7 @@ class NetworkManager: GoogleDirectionAPI {
     
     static var shared: NetworkManager = NetworkManager()
     
-    func getRoute(origin: String, destination: String, completion: @escaping (MKPolyline) -> Void) {
+    func getRoute(origin: String, destination: String, completion: @escaping ([Route]) -> Void) {
        
         let scheme = "https"
         let host = "maps.googleapis.com"
@@ -38,18 +38,9 @@ class NetworkManager: GoogleDirectionAPI {
                 .validate()//Checks is return HTTPstatus code in 200-299
                 .responseDecodable(of: RouteRS.self) { (response) in
                     guard let routeRS = response.value else { return }
-                    let path = GMSPath.init(fromEncodedPath: routeRS.routes[0].overviewPolyline.points)
-                    var points: [CLLocationCoordinate2D] = []
+
                     
-                    for index in 0...(path?.count())!{
-                        points.append((path?.coordinate(at: index))!)
-                    }
-                    
-                    
-                    let count = (points.count)-1
-                    let polyline = MKPolyline(coordinates: points, count: count)
-                    
-                    completion(polyline)
+                    completion(routeRS.routes)
                 }
         }
     }
@@ -57,6 +48,6 @@ class NetworkManager: GoogleDirectionAPI {
 
 protocol GoogleDirectionAPI {
     
-    func getRoute(origin: String, destination: String, completion: @escaping (MKPolyline)-> Void)
+    func getRoute(origin: String, destination: String, completion: @escaping ([Route])-> Void)
     
 }

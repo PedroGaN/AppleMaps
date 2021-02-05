@@ -12,6 +12,8 @@
 //   let routeRS = try? newJSONDecoder().decode(RouteRS.self, from: jsonData)
 
 import Foundation
+import MapKit
+import CoreLocation
 
 // MARK: - RouteRS
 struct RouteRS: Codable {
@@ -56,12 +58,31 @@ struct Route: Codable {
 
 // MARK: - Bounds
 struct Bounds: Codable {
-    let northeast, southwest: Northeast
+    let northeast, southwest: CLLocationCoordinate2D
+}
+extension CLLocationCoordinate2D: Codable {
+
+    enum CodingKeys: String, CodingKey {
+        case latitude = "lat"
+        case longitude = "lng"
+    }
+    
+    public init(from decoder: Decoder) throws {
+        self.init()
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+      
+        self.latitude = try values.decode(Double.self, forKey: .latitude)
+        self.longitude = try values.decode(Double.self, forKey: .longitude)
+        
+    }
+    public func encode(to encoder: Encoder) throws {}
 }
 
+
 // MARK: - Northeast
-struct Northeast: Codable {
+class Northeast: Codable {
     let lat, lng: Double
+    
 }
 
 // MARK: - Leg
@@ -363,3 +384,4 @@ class JSONAny: Codable {
         }
     }
 }
+

@@ -9,6 +9,8 @@
 import UIKit
 import CoreLocation
 import MapKit
+import GoogleMaps
+import GooglePlaces
 
 class MapsViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
     
@@ -131,13 +133,31 @@ class MapsViewController: UIViewController, CLLocationManagerDelegate, MKMapView
 
     func getRoute(){
         
-        let origin = "Toronto"
-        let destination = "Montreal"
+        let destination = "Toronto"
+        let origin = "Montreal"
         
-        NetworkManager.shared.getRoute(origin: origin, destination: destination, completion: {polyline in
+        NetworkManager.shared.getRoute(origin: origin, destination: destination, completion: {routes in
+            
+            let path = GMSPath.init(fromEncodedPath: routes[0].overviewPolyline.points)
+            print(path?.count())
+            
+            var points: [CLLocationCoordinate2D] = []
+            
+            for index in 0...(path?.count())!{
+                points.append((path?.coordinate(at: index))!)
+            }
+            
+            
+            let count = (points.count)-1
+            let polyline = MKPolyline(coordinates: points, count: count)
+            
             
             let location = CLLocationCoordinate2DMake(polyline.coordinate.latitude, polyline.coordinate.longitude)
-            let span = MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1)
+            print(routes[0].bounds.northeast)
+            
+            
+            
+            let span = MKCoordinateSpan(latitudeDelta: routes[0].bounds.northeast.latitude - routes[0].bounds.southwest.latitude, longitudeDelta: routes[0].bounds.northeast.longitude - routes[0].bounds.southwest.longitude)
             
             let region = MKCoordinateRegion(center: location, span: span)
             
